@@ -1,0 +1,63 @@
+{
+  "name": "@isaacs/cached",
+  "description": "Cache a function that takes a path as an argument, expiring whenever the file mtime changes",
+  "license": "BlueOak-1.0.0",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "preversion": "npm test",
+    "postversion": "npm publish",
+    "prepublishOnly": "git push origin --follow-tags",
+    "prepare": "tshy",
+    "pretest": "npm run prepare",
+    "presnap": "npm run prepare",
+    "test": "tap",
+    "snap": "tap",
+    "format": "prettier --write . --loglevel warn --cache",
+    "typedoc": "typedoc"
+  },
+  "prettier": {
+    "semi": false,
+    "printWidth": 70,
+    "tabWidth": 2,
+    "useTabs": false,
+    "singleQuote": true,
+    "jsxSingleQuote": false,
+    "bracketSameLine": true,
+    "arrowParens": "avoid",
+    "endOfLine": "lf"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.9",
+    "prettier": "^2.8.8",
+    "tap": "^18.5.3",
+    "tshy": "^1.7.0",
+    "typedoc": "^0.25.3"
+  },
+  "tshy": {
+    "exports": {
+      "./package.json": "./package.json",
+      ".": "./src/index.ts"
+    }
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    }
+  },
+  "main": "./dist/commonjs/index.js",
+  "types": "./dist/commonjs/index.d.ts",
+  "dependencies": {
+    "@isaacs/catcher": "^1.0.0"
+  }
+}
