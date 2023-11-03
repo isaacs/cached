@@ -1,7 +1,10 @@
 import { catcher } from '@isaacs/catcher'
 import { statSync } from 'fs'
 
-// cache an arbitrary function of arity 0 or 1
+/**
+ * Cache an arbitrary function of arity 0 or 1.
+ * May provide an optional `Map<argType, returnType>`, or one will be created.
+ */
 export function cached<R>(
   fn: () => R,
   cache?: MapLike<undefined, R> | undefined
@@ -28,6 +31,11 @@ export function cached<A, R>(
   )
 }
 
+/**
+ * Defaults to a normal `Map` if not provided, but anything with
+ * get/set/has/delete will work. For example:
+ * <https://isaacs.github.io/node-lru-cache/>
+ */
 export interface MapLike<K, V> {
   get: (key: K) => V | undefined
   has: (key: K) => boolean
@@ -35,19 +43,42 @@ export interface MapLike<K, V> {
   delete: (key: K) => boolean
 }
 
+/**
+ * Return type of cachedMtime()
+ */
+export type MtimeCachedMethod<R> = {
+  (path: string): R
+  /**
+   * cache of mtime values and the most recent peformance.now() value
+   * when the statSync was performed to read it.
+   */
+  mtimeCache: MapLike<string, [mtime: number, lastStatTime: number]>
+  /** return value cache */
+  cache: MapLike<string, R>
+  /**
+   * Get the numeric mtime value for a given path, if possible.
+   * Will `statSync()` the file if the mtime is not in the cache, or if
+   * the time since the lastStatTime is greater than the `statFreqMs`
+   * provided to {@link cachedMtime}.
+   */
+  getMtime: (path: string) => number | undefined
+}
+
+/**
+ * Cache a synchronous FS function that takes a path as a single argument.
+ * The result cache will be invalidated whenever the mtime of the path
+ * changes. May specify minimum time between stat() calls in ms, and provide
+ * both a results cache and mtime cache.
+ */
 export function cachedMtime<R>(
   fn: (path: string) => R,
   statFreqMs: number = 10,
   cache: MapLike<string, R> = new Map<string, R>(),
-  mtimeCache: MapLike<string, [number, number]> = new Map<
+  mtimeCache: MapLike<
     string,
-    [number, number]
-  >()
-): ((path: string) => R) & {
-  mtimeCache: MapLike<string, [number, number]>
-  cache: MapLike<string, R>
-  getMtime: (path: string) => number | undefined
-} {
+    [mtime: number, lastStatTime: number]
+  > = new Map<string, [number, number]>()
+): MtimeCachedMethod<R> {
   const cfn = cached(fn, cache)
   const getMtime = (path: string) => {
     const now = performance.now()
