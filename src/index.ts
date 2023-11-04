@@ -41,6 +41,7 @@ export interface MapLike<K, V> {
   has: (key: K) => boolean
   set: (key: K, value: V) => MapLike<K, V>
   delete: (key: K) => boolean
+  clear: () => void
 }
 
 /**
