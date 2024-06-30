@@ -142,7 +142,7 @@ const readdirCached = cachedMtime(async path => {
     return await readdir(path, 'utf8')
   } catch (er) {
     // oh no! promise failed, delete it from the cache
-    g.cache.delete(path)
+    readdirCached.cache.delete(path)
     // now throw the error we got for the user to handle
     throw er
   }
