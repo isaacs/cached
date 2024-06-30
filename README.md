@@ -106,3 +106,45 @@ const cached = cachedMtime(
 
 See [the typedocs](https://isaacs.github.io/cached) for more
 information.
+
+## Limitations and Caveats
+
+The `cachedMtime` method uses `statSync` to get the `mtime` of
+the path. So, if you are using this in a scenario where you must
+not block the event loop, then that could of course be a problem.
+The `statSync` is not wrapped in a try/catch either, meaning that
+calling this method on a non-existent path will throw an error.
+
+This module is intentionally very small and simple, and so there
+are no options to limit how long things are cached for, set
+limits on the cache, and so on. For a _much_ more comprehensive
+caching library, with support for a wide array of
+configurability, sync memoizing and async fetching, check out
+[LRUCache](https://isaacs.github.io/node-lru-cache/).
+
+Note that you _may_ use this module to cache the results of async
+functions, but it just means that the _Promise_ itself will be
+cached, rather than caching the _resolution_ of the Promise. This
+means, for example, that Promise _rejections_ will also be
+cached. Maybe that's what you want! But if not, then you'll have
+to either work around it, or use something else.
+
+One way to work around it would be to explicitly delete any
+failing promises from the function's memoization cache.
+
+```js
+import { readdir } from 'node:fs/promises'
+// If the readdir() fails, then it'll reject the promise,
+// and we'll delete it from the memoization cache
+const readdirCached = cachedMtime(async path => {
+  try {
+    // happy path, return the result
+    return await readdir(path, 'utf8')
+  } catch (er) {
+    // oh no! promise failed, delete it from the cache
+    g.cache.delete(path)
+    // now throw the error we got for the user to handle
+    throw er
+  }
+})
+```
