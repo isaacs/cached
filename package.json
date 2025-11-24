@@ -18,17 +18,6 @@
     "format": "prettier --write . --loglevel warn --cache",
     "typedoc": "typedoc"
   },
-  "prettier": {
-    "semi": false,
-    "printWidth": 70,
-    "tabWidth": 2,
-    "useTabs": false,
-    "singleQuote": true,
-    "jsxSingleQuote": false,
-    "bracketSameLine": true,
-    "arrowParens": "avoid",
-    "endOfLine": "lf"
-  },
   "devDependencies": {
     "@types/node": "^20.8.9",
     "prettier": "^2.8.8",
