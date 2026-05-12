@@ -7,15 +7,15 @@ import { statSync } from 'fs'
  */
 export function cached<R>(
   fn: () => R,
-  cache?: MapLike<undefined, R> | undefined
+  cache?: MapLike<undefined, R> | undefined,
 ): (() => R) & { cache: Map<undefined, R> }
 export function cached<A, R>(
   fn: (arg: A) => R,
-  cache?: MapLike<A, R> | undefined
+  cache?: MapLike<A, R> | undefined,
 ): ((arg: A) => R) & { cache: Map<A, R> }
 export function cached<A, R>(
   fn: (arg?: A) => R,
-  cache: MapLike<A | undefined, R> = new Map<A | undefined, R>()
+  cache: MapLike<A | undefined, R> = new Map<A | undefined, R>(),
 ) {
   return Object.assign(
     (arg?: A) => {
@@ -27,7 +27,7 @@ export function cached<A, R>(
       cache.set(arg, r)
       return r
     },
-    { cache }
+    { cache },
   )
 }
 
@@ -78,7 +78,7 @@ export function cachedMtime<R>(
   mtimeCache: MapLike<
     string,
     [mtime: number, lastStatTime: number]
-  > = new Map<string, [number, number]>()
+  > = new Map<string, [number, number]>(),
 ): MtimeCachedMethod<R> {
   const cfn = cached(fn, cache)
   const getMtime = (path: string) => {
@@ -103,6 +103,6 @@ export function cachedMtime<R>(
       getMtime(path)
       return cfn(path)
     },
-    { mtimeCache, cache, getMtime }
+    { mtimeCache, cache, getMtime },
   )
 }

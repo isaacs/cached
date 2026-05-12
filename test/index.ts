@@ -1,9 +1,4 @@
-import {
-  readFileSync,
-  unlinkSync,
-  utimesSync,
-  writeFileSync,
-} from 'fs'
+import { readFileSync, unlinkSync, utimesSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
 import t from 'tap'
 import { cached, cachedMtime } from '../src/index.js'
@@ -22,7 +17,7 @@ t.test('caching a filesystem thing', async t => {
     t.testdir({
       file: 'contents',
     }),
-    'file'
+    'file',
   )
   const start = new Date('2000-01-01')
   utimesSync(f, start, start)
@@ -32,7 +27,7 @@ t.test('caching a filesystem thing', async t => {
     read,
     10,
     readCachedZero.cache,
-    readCachedZero.mtimeCache
+    readCachedZero.mtimeCache,
   )
   t.equal(readCachedZero(f), 'contents')
   t.equal(readCachedTen(f), 'contents')
@@ -40,7 +35,7 @@ t.test('caching a filesystem thing', async t => {
   utimesSync(
     f,
     new Date(start.getTime() + 5),
-    new Date(start.getTime() + 5)
+    new Date(start.getTime() + 5),
   )
   t.equal(readCachedTen(f), 'contents')
   t.equal(readCachedZero(f), 'new contents')
@@ -50,7 +45,7 @@ t.test('caching a filesystem thing', async t => {
   utimesSync(
     f,
     new Date(start.getTime() + 5000),
-    new Date(start.getTime() + 5000)
+    new Date(start.getTime() + 5000),
   )
   await new Promise<void>(r => setTimeout(r, 100))
   t.equal(readCachedTen(f), 'new new contents')

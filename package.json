@@ -15,21 +15,27 @@
     "presnap": "npm run prepare",
     "test": "tap",
     "snap": "tap",
-    "format": "prettier --write . --loglevel warn --cache",
-    "typedoc": "typedoc"
+    "format": "prettier --write .",
+    "typedoc": "typedoc",
+    "lint": "oxlint --fix src test",
+    "postsnap": "npm run lint",
+    "postlint": "npm run format"
   },
   "devDependencies": {
-    "@types/node": "^20.8.9",
-    "prettier": "^2.8.8",
-    "tap": "^18.5.3",
-    "tshy": "^1.7.0",
-    "typedoc": "^0.25.3"
+    "@types/node": "^25.7.0",
+    "oxlint": "^1.64.0",
+    "oxlint-tsgolint": "^0.22.1",
+    "prettier": "^3.8.3",
+    "tap": "^21.7.2",
+    "tshy": "^4.1.2",
+    "typedoc": "^0.28.19"
   },
   "tshy": {
     "exports": {
       "./package.json": "./package.json",
       ".": "./src/index.ts"
-    }
+    },
+    "selfLink": false
   },
   "exports": {
     "./package.json": "./package.json",
@@ -49,5 +55,6 @@
   "dependencies": {
     "@isaacs/catcher": "^1.0.0"
   },
-  "version": "1.0.1"
+  "version": "1.0.1",
+  "module": "./dist/esm/index.js"
 }
